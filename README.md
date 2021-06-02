@@ -41,29 +41,37 @@ cat /etc/hosts
 ```bash
 ssh rabia@127.0.0.1
 ```
+* Ssh key oluşturma ve keyi ssh key kopyalama için bu komutları kullandım. Asimetlik şifreleme ile şifreledim. Dsa da kullanılabilir.
+```bash
+sudo ssh-keygen -t rsa # id_rsa şeklinde bir key dosyası oluştu.
+ssh-copy-id -i key kullanici_adi@sunucuId # sunucuya kopyaladım
+ssh kullanici_adi@sunucuId -i key # key ile ssh a bağlandım
+```
 * Parolasız ssh girişi için:
 ```bash
 ssh -o PubkeyAuthentication=no kullanici@uzak_ip  # rabia@127.0.0.1
 ```
+* Güvenlik duvarı ayarlarını
+```bash
+sudo ufw status # güvenlik duvarının durumu
+sudo ufw enable # güvenlik duvarını etkinleştirme
+sudo ufw status verbose # güvenlik duvarının detaylı durumu
+sudo less /etc/services #servislerin sayfalanmış listesi
+```
+* Güvenlik duvarının ssh ve web isteklerine açma
+```bash
+sudo ufw allow SSH # ssh isteklerine izin verilmesi
+sudo ufw allow http # web sunucusuna izin verilmesi
+sudo ufw status verbose # detaylı olarak tekrar kontrol ettim
+```
+* Apache kurulumu için
+```bash
+sudo apt-get install apache2
+```
+systemctl unmask sshd
+systemctl enable sshd
 
 
-
-
-
-İlk aşamada sizden bir sanal makine kurmanızı istiyoruz.
-
-Yapmanız gereken işlemler:
-* CentOS 8, Debian 10 ya da Ubuntu LTS Sunucu 20.04 dağıtımlarından
-birini kullanmalısınız.
-* Dağıtım en az sayıda paketle kurulmuş olmalı ve servisin kendisiyle
-ilgili olmayan ek paketler kurulmamalı (ör: X sunucu)
-* Bir kullanıcı oluşturun (root dışında). O kullanıcıya kendi (host)
-bilgisayarınızdan SSH ile bağlanın. Bağlantı anahtar (key) temelli
-gerçekleştirilmeli.
-* SSH servisi için parola ile doğrulamayı kapatın.
-* Güvenlik duvarını SSH ve web servisi dışında herhangi bir isteği kabul
-etmeyecek biçimde ayarlayın.
-* Apache ya da Nginx web sunucusu kurun.
 * Web servisini 3 alan adına (domain) birden hizmet verecek biçimde
 ayarlayın: bugday.org, ozgurstaj2021.com, özgürstaj2021.com.
 * ozgurstaj2021.com için,
