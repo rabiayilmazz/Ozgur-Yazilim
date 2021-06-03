@@ -34,10 +34,7 @@ sudo apt upgrade
 ```
 
 ## SSH ile Hosta bağlanma
-* Hostları görüntülemek için aşağıdaki komut kullanılır.
-```
-cat /etc/hosts
-```
+* Ifconfig ile ip adresimi öğrendim.
 * İlk ssh bağlantımı kendi wind bilgisayarımdan putty üzerinden yaptım. Ip adresini yazıp bağlantıyı gerçekleştirdim. Giriş yaparken kullanıcı adım ve şifremi kullandım.
 * Girişleri kontrol etmek için
 ```bash
@@ -52,7 +49,7 @@ sudo ufw allow SSH # ssh isteklerine izin verilmesi
 sudo ufw allow http # web sunucusuna izin verilmesi
 sudo ufw status verbose # detaylı olarak tekrar kontrol ettim
 ```
-* Putty üzerinden ssh key oluşturma ve keyi ssh key kopyalama için bu komutları kullandım. Asimetlik şifreleme ile şifreledim. Dsa da kullanılanabilirdim. Öncelikle putty den keys bölümünden rsa key oluşturdum. Oluşturduğum public ve private keyleri kaydettim. Oluşan keyi kopyalayıp, sunucum üzerinde .ssh klasörü oluşturdum. Bu klasörün içine vim editörü ile keyi kopyalayıp kaydettim.
+* Putty üzerinden bağlantı kuracağım. Anahtar oluşturmak  için asimetlik şifreleme ile şifreledim. Dsa da kullanılanabilirdim. Öncelikle putty den keys bölümünden rsa key oluşturdum. Oluşturduğum public ve private keyleri kaydettim. Oluşan keyi kopyalayıp, sunucum üzerinde .ssh klasörü oluşturdum. Bu klasörün içine vim editörü ile keyi kopyalayıp kaydettim.
 ```bash
 sudo mkdir /home/rabia/.ssh #.ssh oluşturma
 sudo vim /home/rabia/.ssh/authorized_keys #kopyaladığım keyi yapıştırdım. :wq ile kaydedip çıktım.
@@ -68,7 +65,7 @@ sudo apt-get install apache2
 ```
 * Şu ana kadar oluşturduğum dosyaların izinlerini baştan düzenledim.
 ```bash
-chmod 640 * # verdiğim bütün izinleri geri aldım ya da 600
+chmod 640 * # verdiğim bütün izinleri geri aldım ya da 600 bundan sonra sudo su ile devam etmek zorunda kaldım.
 ```
 * 3 domain ekledim. özgürstaj2021.com türkçe karakter içerdiği için sorun yaptı.
 * Domainleri eklerken kullandığım komutlar sırasıyla bu şekilde.
@@ -99,7 +96,7 @@ sudo mkdir -p /var/www/özgürstaj2021/public_html #özgür sdtajın dosyasını
   </body>
 </html>
 ```
-  * Bu işlemleri tamamladıktan sonra domainlere özel .conf dosyaları oluşturdu. Düzenlemeleri yani her domain için özel kısımları ayarladım.
+  * Bu işlemleri tamamladıktan sonra domainlere özel .conf dosyaları oluşturdum. Düzenlemeleri yani her domain için özel kısımları ayarladım.
   ```xml
   <VirtualHost *:80>
     ServerAdmin admin@domain_adi
@@ -118,48 +115,23 @@ sudo mkdir -p /var/www/özgürstaj2021/public_html #özgür sdtajın dosyasını
 
   sudo a2dissite 000-default.conf
   ```
-  * Sıradaki işlemeim apacheyi tekrardan başlatmak ve windos bilgisayarımdan hosts dosyasına bu domainleri eklemek.
+  * Sıradaki işlemim apacheyi tekrardan başlatmak ve windos bilgisayarımdan hosts dosyasına bu domainleri eklemek.
   ```bash
   sudo systemctl restart apache2 #restast işlemini bu komut ile yaptım. bunun yerine
   sudo service restart apache2 # komutu da iş görüyor.
   ```
   * Artık bugday.org yazdığımda ilgili index.html dosyasındaki veriyi görmeyi umut ederek browserda bugday.org yazdım ve aradım. Ama bundan önce windowsun altında hosts'a gidip domainleri server ip adresi ile ekledim. Arama sonucum başarısız oldu. Çünkü aynı ağ üzerinde değilmiş.
-  * Karşılaştığım bu sorunu sanal makinenin network ayarlarını düzenleyerek hallettim. Tekrar denediğimde index.html içerisine yazdığım mesajı gördüm. 
-
-
-** Wordpress'in son sürümünü kurun.
-** Wordpress'te yeni bir yazı (post) yazın ve o yazıya bir dosya yükleyin.
-** Yeni yazınıza SEO-uyumlu bir URL'den ulaşabilmelisiniz
-(ör:https://ozgurstaj2021.com/2021/02/03/benim-yeni-yazim/)
-** Herhangi bir Wordpress eklentisi, teması kurmanız ya da PHP kodu
-düzenlemeniz beklenmiyor. Oralara girmeyin.
-** Aynı Wordpress'in hem ozgurstaj2021.com hem de özgürstaj2021.com ile
-erişilebilir olması gerekiyor.
-* bugday.org için bir web sitesi oluşturun.
-** Site için bir web sayfası oluşturun, içinde 100 kere
-"Kullanıcılarımın kişisel verilerini toplamayacağım." yazsın (her biri
-yeni bir satırda).
-** zubizu.com/yonetim adresine giriş parola korumasına sahip olmalı,
-sadece "ad.soyad" kullanıcı adı ve "parola" parolası ile girilebilmeli.
-** Web sitesi hemwww.zubizu.com  hem de zubizu.com adresinden
-erişilebilir olmalıdır.
-* Bu alan adları için DNS sunucu kurmanız ve ayarlamanız beklenmiyor.
-Oralara girmeyin. DNS'in doğru biçimde ayarlandığını farzedin.
-
-Dikkat edilmesi gereken noktalar:
-* Sistem tekrar başlatıldığında sistemin ilgili servislerin otomatik
-başlaması ve elle müdahale gerekmeden sorunsuz çalışması gerekiyor.
-* Yetkileri bol keseden dağıtmayın. Örneğin bir dosya için okuma yetkisi
-vermek yeterli ise, fazladan yazma ve çalıştırma yetkisi vermeyin.
-* Paket yönetimi kullanın (Wordpress hariç).
-* İhtiyaç olmayan ek paketler kurmayın.
-* Ek özgür ve açık kaynak kodlu olmayan yazılımlar kullanmayın.
-
-Gönderim:
-* Yaptığınız işlemlerin adım adım yazıldığı bir markdown belgesi
-yazmanızı istiyoruz. Ekran görüntüleri almakla uğraşmayın (yazılı olarak
-anlatabilirsiniz). Belgeyi size yazılan e-postaya yanıt olarak gönderin.
-* Belgede olabildiğince açıklayıcı olmanızı, düşündüklerinizi, neyi
-neden yaptığınızı aktarmanızı bekliyoruz.
-* Sanal makinenizi saklayın. Bir sonraki aşamada sizinle görüşme
-yapılırken, sanal makinenizi açıp yaptıklarınızı göstermeniz istenebilir.
+  * Karşılaştığım bu sorunu sanal makinenin network ayarlarını düzenleyerek hallettim. Tekrar denediğimde index.html içerisine yazdığım mesajı gördüm.
+  * Wordpressin son sürümünü kurmak için
+  ```bash
+   wget https://wordpress.org/latest.zip # bunu /var/www/html dosyasında yapıyorum. Serverın ip adresini yazınca direkt açılması için.
+   unzip latest.zip # sıkıştırılmış dosyayı çıkardım.
+   mv wordpress/* . # sıkışmış dosyadaki her şeyi bir üst dizine taşıdım. Böylelikle domaini yazınca direkt wp indirebileceğim.
+  ```
+* Kurulumu yaptım. Mysql, php de ekledim. Bir database, kullanıcı oluşturup wordpressi ona bağladım.
+* Bugday.org dan index.php ye 100 kere **Kullanıcılarımın kişisel verilerini toplamayacağım."** yazdım.
+* Veritabanı bağlantı hatası aldım. Bu maddeyi yapamayınca son bir kaç görevi de yerine getiremiyorum. Bunu tam pes ederken wp dosyalarını kaldırıp tekrar kurunca düzletmiş bulundum.
+* "Merhaba Özgür Yazılım" adında bir post hazırlayıp yayımladım.
+* Diğer domainler içinde aynı veritabanı kaydı yapıp postlara erişim sağladım. Böylelikle tüm domainlerden aynı psta erişim sağlandım.
+* bugday.org içinde aynı işlemleri yaptım. Aynı wordpresse bağladım. başka bir web sitesi nasıl eklenir, son maddenin ne olduğunu anlayamadım.
+* Bütün adımları tamamladım.
