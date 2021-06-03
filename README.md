@@ -17,9 +17,10 @@
 * İndirdiğimiz iso dosyasını seçip **OK** diyerek devam ediyoruz.
 * İlgili ayarlamaları ana ekranda **edit machine** kısmından da yapabiliriz.
 * Artık sanal makine hazır çalıştırabiliriz. Dil klavye seneçlerini ayarlayıp kurulumu başlatıyoruz. Sanal makine artık hazır.
+* İnternet, kullanıcı adı, ve kurulu gelecek ssh ayarlarını yaparak serverı açtım.
 
 ### Root ayarlarını yapmak ve güncellemeler
-* root şifresi ayarlama
+* Daha önce root şifresi ayarlamadıpım için root şifresi ayarlamasını yaptım. Exit yaparak geçerli kullanıcıdan çıkış yapıp root ile giriş yapmayı denedim.
 ```
 sudo passwd root
 ```
@@ -37,44 +38,95 @@ sudo apt upgrade
 ```
 cat /etc/hosts
 ```
-* Ssh ile locale bağlanmak içinde kullanıcı ve ip adresi gerekli.
+* İlk ssh bağlantımı kendi wind bilgisayarımdan putty üzerinden yaptım. Ip adresini yazıp bağlantıyı gerçekleştirdim. Giriş yaparken kullanıcı adım ve şifremi kullandım.
+* Girişleri kontrol etmek için
 ```bash
-ssh rabia@127.0.0.1
+who #ile girişleri kontrol ettim. Girişim başarılıydı.
 ```
-* Ssh key oluşturma ve keyi ssh key kopyalama için bu komutları kullandım. Asimetlik şifreleme ile şifreledim. Dsa da kullanılabilir.
-```bash
-sudo ssh-keygen -t rsa # id_rsa şeklinde bir key dosyası oluştu.
-ssh-copy-id -i key kullanici_adi@sunucuId # sunucuya kopyaladım
-ssh kullanici_adi@sunucuId -i key # key ile ssh a bağlandım
-```
-* Parolasız ssh girişi için:
-```bash
-ssh -o PubkeyAuthentication=no kullanici@uzak_ip  # rabia@127.0.0.1
-```
-* Güvenlik duvarı ayarlarını
+* Güvenlik duvarı ayarlarını düzenledim. Aşağıdaki komutları kullanarak.
 ```bash
 sudo ufw status # güvenlik duvarının durumu
 sudo ufw enable # güvenlik duvarını etkinleştirme
 sudo ufw status verbose # güvenlik duvarının detaylı durumu
-sudo less /etc/services #servislerin sayfalanmış listesi
-```
-* Güvenlik duvarının ssh ve web isteklerine açma
-```bash
 sudo ufw allow SSH # ssh isteklerine izin verilmesi
 sudo ufw allow http # web sunucusuna izin verilmesi
 sudo ufw status verbose # detaylı olarak tekrar kontrol ettim
+```
+* Putty üzerinden ssh key oluşturma ve keyi ssh key kopyalama için bu komutları kullandım. Asimetlik şifreleme ile şifreledim. Dsa da kullanılanabilirdim. Öncelikle putty den keys bölümünden rsa key oluşturdum. Oluşturduğum public ve private keyleri kaydettim. Oluşan keyi kopyalayıp, sunucum üzerinde .ssh klasörü oluşturdum. Bu klasörün içine vim editörü ile keyi kopyalayıp kaydettim.
+```bash
+sudo mkdir /home/rabia/.ssh #.ssh oluşturma
+sudo vim /home/rabia/.ssh/authorized_keys #kopyaladığım keyi yapıştırdım. :wq ile kaydedip çıktım.
+```
+* Key ile giriş yapmak için putty üzerinden keyimin yolunu gösterdim ve tekrar key ile giriş yaptım.
+* Parolasız ssh girişi için:
+```bash
+ssh -o PubkeyAuthentication=no kullanici@uzak_ip
 ```
 * Apache kurulumu için
 ```bash
 sudo apt-get install apache2
 ```
-systemctl unmask sshd
-systemctl enable sshd
+* Şu ana kadar oluşturduğum dosyaların izinlerini baştan düzenledim.
+```bash
+chmod 640 * # verdiğim bütün izinleri geri aldım ya da 600
+```
+* 3 domain ekledim. özgürstaj2021.com türkçe karakter içerdiği için sorun yaptı.
+* Domainleri eklerken kullandığım komutlar sırasıyla bu şekilde.
+```bash
+sudo mkdir -p /var/www/bugday.org/public_html # bugdayın dosyasını oluşturdum.
+sudo mkdir -p /var/www/ozgurstaj2021/public_html #ozgur stajın dosyasını oluşturdum.
+sudo mkdir -p /var/www/özgürstaj2021/public_html #özgür sdtajın dosyasını oluşturdum.
+```
+  * İzinleri vermek için ayarlamalarımı yaptım.
+  ```bash
+    sudo chown -R $USER:$USER /var/www//bugday.org/public_html
+    sudo chown -R $USER:$USER /var/www/ozgurstaj2021/public_html
+    sudo chown -R $USER:$USER /var/www/özgürstaj2021/public_html
+    # şu komutu da kullanabilirdim.
+    sudo chown -R $USER:$USER /var/www/*/*
+  ```
+  * Sayfaların doğru bir şekilde çalışabilmesi için bu izni de vermem gerekiyor.
+  ```bash
+  sudo chmod -R 755 /var/www
+  ```
+  * Her bir klasör için index.html dosyası düzenledim. Html kodlarını yazdım siteye girdiğimde karşıma çıkacak yazıya ihtiyacım vardı.
+  ```Html
+  <html>
+  <head>
+    <title>Bu siteye hoş geldin</title>
+  </head>
+  <body> <h1>Hello world!</h1>
+  </body>
+</html>
+```
+  * Bu işlemleri tamamladıktan sonra domainlere özel .conf dosyaları oluşturdu. Düzenlemeleri yani her domain için özel kısımları ayarladım.
+  ```xml
+  <VirtualHost *:80>
+    ServerAdmin admin@domain_adi
+    ServerName domain_adi
+    ServerAlias www.domain_adi
+    DocumentRoot /var/www/domain_adi/public_html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+  ```
+  * Etkinleştirme işlemi için **a2ensite** kullandım. En sonda default conf dosyasını etkinleştirdim.
+  ```bash
+  sudo a2ensite bugday.org.conf
+  sudo a2ensite ozgurstaj2021.com.conf
+  sudo a2ensite özgürstaj2021.com.conf
+
+  sudo a2dissite 000-default.conf
+  ```
+  * Sıradaki işlemeim apacheyi tekrardan başlatmak ve windos bilgisayarımdan hosts dosyasına bu domainleri eklemek.
+  ```bash
+  sudo systemctl restart apache2 #restast işlemini bu komut ile yaptım. bunun yerine
+  sudo service restart apache2 # komutu da iş görüyor.
+  ```
+  * Artık bugday.org yazdığımda ilgili index.html dosyasındaki veriyi görmeyi umut ederek browserda bugday.org yazdım ve aradım. Ama bundan önce windowsun altında hosts'a gidip domainleri server ip adresi ile ekledim. Arama sonucum başarısız oldu. Çünkü aynı ağ üzerinde değilmiş.
+  * Karşılaştığım bu sorunu sanal makinenin network ayarlarını düzenleyerek hallettim. Tekrar denediğimde index.html içerisine yazdığım mesajı gördüm. 
 
 
-* Web servisini 3 alan adına (domain) birden hizmet verecek biçimde
-ayarlayın: bugday.org, ozgurstaj2021.com, özgürstaj2021.com.
-* ozgurstaj2021.com için,
 ** Wordpress'in son sürümünü kurun.
 ** Wordpress'te yeni bir yazı (post) yazın ve o yazıya bir dosya yükleyin.
 ** Yeni yazınıza SEO-uyumlu bir URL'den ulaşabilmelisiniz
