@@ -130,8 +130,10 @@ sudo mkdir -p /var/www/özgürstaj2021/public_html #özgür sdtajın dosyasını
   ```
 * Kurulumu yaptım. Mysql, php de ekledim. Bir database, kullanıcı oluşturup wordpressi ona bağladım.
 * Bugday.org dan index.php ye 100 kere **Kullanıcılarımın kişisel verilerini toplamayacağım."** yazdım.
-* Veritabanı bağlantı hatası aldım. Bu maddeyi yapamayınca son bir kaç görevi de yerine getiremiyorum. Bunu tam pes ederken wp dosyalarını kaldırıp tekrar kurunca düzletmiş bulundum.
-* "Merhaba Özgür Yazılım" adında bir post hazırlayıp yayımladım.
-* Diğer domainler içinde aynı veritabanı kaydı yapıp postlara erişim sağladım. Böylelikle tüm domainlerden aynı psta erişim sağlandım.
+* Veritabanı bağlantı hatası aldım. Bu maddeyi yapamayınca son bir kaç görevi de yerine getiremiyorum. Bu sorunla uzun süre uğraştım tam pes ederken wp dosyalarını kaldırıp tekrar kurmayı denedim sorun ortadan kalktı.
+* wp-config.php dosyasına wp ekranındaki kodu kopyalayıp kurulumu başlattım.
+* Wp ekranında "Merhaba Özgür Yazılım" adında bir post hazırlayıp yayımladım.
+* özgürstaj2021.com türkçe karakter içerdiği için burdan posta erişim sağlayamadım.
+* Diğer domainler içinde aynı veritabanı kaydı yapıp postlara erişim sağladım. Böylelikle tüm domainlerden aynı pota erişim sağlandım.
 * bugday.org içinde aynı işlemleri yaptım. Aynı wordpresse bağladım. başka bir web sitesi nasıl eklenir, son maddenin ne olduğunu anlayamadım.
 * Bütün adımları tamamladım.
